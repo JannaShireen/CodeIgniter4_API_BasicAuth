@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
-$routes->group("api", ["namespace" => "App\Controllers\Api"], function ($routes){
+$routes->group("api", ["namespace" => "App\Controllers\Api", "filter" => "basic_auth"], function ($routes){
 
     //category
     $routes->post("create-category","ApiController::createCategory");
