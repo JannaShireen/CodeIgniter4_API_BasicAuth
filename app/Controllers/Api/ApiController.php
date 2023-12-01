@@ -8,6 +8,10 @@ use CodeIgniter\RESTful\ResourceController;
 
 class ApiController extends ResourceController
 {
+    private $db;
+    public function __construct(){
+        $this->db = db_connect();
+    }
 //POST
     public function createCategory()
 {
@@ -129,6 +133,19 @@ public function createBlog(){
 }
 //GET
 public function listBlogs(){
+    $builder = $this->db->table("blogs");
+    $builder->select("blogs.*, categories.name as category_name");
+    $builder->join("categories","categories.id = blogs.category_id");
+   $data =  $builder->get()->getResult();
+   $response = [
+    "status" => 200,
+    "message" =>"Blog Lists",
+    "data" => $data,
+    "error" => false,
+   ];
+
+return $this->respondCreated($response);
+
 }
 //GET
 public function singleBlogDetail($blog_id){
