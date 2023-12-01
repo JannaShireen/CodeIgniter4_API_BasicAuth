@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Models\CategoryModel;
+use App\Models\BlogModel;
 use CodeIgniter\RESTful\ResourceController;
 
 class ApiController extends ResourceController
@@ -68,6 +69,62 @@ public function listCategory(){
 }
 //POST
 public function createBlog(){
+    $rules = [
+        "category_id" => "required",
+        "title" => "required" 
+    ];
+    if(!$this->validate($rules)){
+        //error in validation
+        $response = [
+            "status" => 500,
+            "message" => $this->validator->getErrors(),
+            "data" => [],
+            "error" => true,
+        ];
+    }
+    else{
+        //validated
+        $category_obj = new CategoryModel();
+        $is_exists = $category_obj->find($this->request->getVar("category_id"));
+        if(!$is_exists){
+            //category does not exists
+            $response = [
+                "status" => 404,
+                "message" => "Category not found",
+                "data" => [],
+                "error" => true,
+            ];
+        }
+        else{
+            //category exists
+            $blog_obj = new BlogModel();
+            $data = [
+                "category_id" => $this->request->getVar("category_id"),
+                "title" => $this->request->getVar("title"),
+                "content" => $this->request->getVar("content"),
+            ];
+            if( $blog_obj->insert($data)){
+                // new blog created successsfully
+                $response = [
+                    "status" => 200,
+                    "message" => "Blog created successfully",
+                    "data" => [],
+                    "error" => false,
+                ];
+            }
+            else{
+                //failed to create blog.
+                $response = [
+                    "status" => 500,
+                    "message" =>"Failed to create a blog",
+                    "data" => [],
+                    "error" => true,
+                ];
+            }
+
+        }
+    }
+    return $this->respondCreated($response);
 
 }
 //GET
