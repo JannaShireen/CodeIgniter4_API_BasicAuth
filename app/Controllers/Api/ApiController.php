@@ -55,6 +55,15 @@ class ApiController extends ResourceController
 }
 //GET
 public function listCategory(){
+    $category_object = new CategoryModel();
+
+    $response = [
+        "status" => 200,
+        "message" => "List Categories",
+        "data" => $category_object->findAll(),
+        "error" => false,
+    ];
+    return $this->respondCreated($response);
 
 }
 //POST
