@@ -149,7 +149,18 @@ return $this->respondCreated($response);
 }
 //GET
 public function singleBlogDetail($blog_id){
-
+    $builder = $this->db->table("blogs");
+    $builder->select("blogs.*, categories.name");
+    $builder->join("categories","blogs.category_id = categories.id");
+    $builder->where("blogs.id", $blog_id);
+    $data = $builder->get()->getRow();
+    $response = [
+        "status"=> 200,
+        "message"=> "Single blog API",
+        "data"=> $data,
+        "error"=> false,
+    ];
+    return $this->respondCreated($response);
 }
 //POST->PUT
 public function updateBlog($blog_id)
